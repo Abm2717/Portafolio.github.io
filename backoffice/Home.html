@@ -1,18 +1,52 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home | Snoopy Backoffice</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home | Backoffice</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>Acceso no autorizado</h1>
-    <img src="https://upload.wikimedia.org/wikipedia/en/5/53/Snoopy_Peanuts.png" alt="Snoopy" class="logo">
-    <p>Debes iniciar sesión para entrar. 💤</p>
-    <a href="index.html" class="back">Volver al Login</a>
+  <div class="home-container">
+    <header class="home-header">
+      <div class="user-info">
+        <span id="userName">Nombre de usuario</span>
+      </div>
+      <button id="logoutBtn" class="logout-btn">Cerrar sesion</button>
+    </header>
+
+    <main class="projects-grid">
+      <div id="projectList"></div>
+      
+        <div class="add-project-card" id="addProjectBtn">
+        <span class="add-icon">+</span>
+        <p>Agregar proyecto</p>
+        <small>Haz click para agregar proycetos a tu cuenta.</small>
+      </div>
+    </main>
   </div>
+
+  <div id="projectModal" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" id="closeModal">&times;</button>
+      <h2 id="modalTitle">Agregar Proyecto</h2>
+      <p class="modal-description">Ingresa los datos de tu proyecto</p>
+      
+      <form id="projectForm">
+        <input type="hidden" id="projectId" />
+        <input id="title" type="text" placeholder="Titulo del proyecto" required />
+        <textarea id="description" placeholder="Descripcion del proyecto" required></textarea>
+        <input id="technologies" type="text" placeholder="Tecnologias (separadas por comas)" />
+        <input id="repository" type="url" placeholder="URL del repositorio (opcional)" />
+        
+        <div class="modal-buttons">
+          <button type="submit" class="btn-save" id="saveBtn">Guardar</button>
+          <button type="button" class="btn-delete" id="deleteBtn" style="display: none;">Eliminar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
-
