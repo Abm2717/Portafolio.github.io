@@ -46,12 +46,13 @@ document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
     const data = await res.json();
     console.log("Status:", res.status, "Respuesta:", data);
 
-    if (res.ok && data.token && data.user) {
+    // ✅ CORRECTO: Tu API devuelve data.userPublicData
+    if (res.ok && data.token && data.userPublicData) {
       localStorage.setItem("authToken", data.token);
-      localStorage.setItem("userId", data.user.id);
-      localStorage.setItem("userEmail", data.user.email);
-      localStorage.setItem("userName", data.user.name);
-      localStorage.setItem("itsonId", data.user.itsonId);
+      localStorage.setItem("userId", data.userPublicData._id);
+      localStorage.setItem("userEmail", data.userPublicData.email);
+      localStorage.setItem("userName", data.userPublicData.name);
+      localStorage.setItem("itsonId", data.userPublicData.itsonId);
 
       msg.textContent = "Inicio de sesion exitoso. Redirigiendo...";
       msg.style.color = "green";
@@ -83,8 +84,6 @@ if (window.location.pathname.includes("Home.html")) {
   const imageInput = document.getElementById("images");
   const preview = document.getElementById("preview");
 
-  let selectedImages = [];
-  
   document.getElementById("logoutBtn").addEventListener("click", () => {
     localStorage.clear();
     window.location.href = "index.html";
@@ -97,7 +96,6 @@ if (window.location.pathname.includes("Home.html")) {
   function openModal(project = null) {
     projectForm.reset();
     preview.innerHTML = "";
-    selectedImages = [];
 
     if (project) {
       modalTitle.textContent = "Editar Proyecto";
@@ -107,9 +105,9 @@ if (window.location.pathname.includes("Home.html")) {
       document.getElementById("technologies").value = project.technologies?.join(", ") || "";
       document.getElementById("repository").value = project.repository || "";
       document.getElementById("images").value = project.images?.join(", ") || "";
-      
       deleteBtn.style.display = "block";
 
+      // Preview de imágenes
       if (project.images?.length) {
         project.images.forEach((img) => {
           const imgEl = document.createElement("img");
@@ -130,9 +128,9 @@ if (window.location.pathname.includes("Home.html")) {
     modal.classList.remove("active");
     projectForm.reset();
     preview.innerHTML = "";
-    selectedImages = [];
   }
 
+  // Preview en tiempo real de las URLs de imágenes
   imageInput.addEventListener("input", (e) => {
     const urls = e.target.value
       .split(",")
@@ -208,10 +206,8 @@ if (window.location.pathname.includes("Home.html")) {
       description,
       technologies,
       repository: repository || undefined,
-      images: images  
+      images: images
     };
-
-    console.log("Enviando proyecto:", projectData);
 
     try {
       let res;
@@ -229,18 +225,14 @@ if (window.location.pathname.includes("Home.html")) {
         });
       }
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Error al guardar el proyecto");
-      }
-
+      if (!res.ok) throw new Error("Error al guardar el proyecto");
       alert(projectId ? "Proyecto actualizado correctamente" : "Proyecto creado correctamente");
+
       closeModal();
       loadProjects();
-      
     } catch (error) {
       console.error("Error al guardar proyecto:", error);
-      alert("Error al guardar el proyecto: " + error.message);
+      alert("Error al guardar el proyecto. Por favor, intenta de nuevo.");
     }
   });
 
