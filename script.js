@@ -1,4 +1,4 @@
-const API_BASE = "https://portfolio-api-three-black.vercel.app/api/v1";
+const API_BASE = "https://portfolio-api-three-black.vercel.app/api/v1"; 
 
 document.getElementById("registerForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -56,7 +56,7 @@ document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
       msg.textContent = "Inicio de sesion exitoso. Redirigiendo...";
       msg.style.color = "green";
 
-      setTimeout(() => (window.location.href = "home.html"), 1000);
+      setTimeout(() => (window.location.href = "Home.html"), 1000);
     } else {
       msg.textContent = "Credenciales incorrectas.";
       msg.style.color = "red";
@@ -68,7 +68,7 @@ document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
   }
 });
 
-if (window.location.pathname.includes("home.html")) {
+if (window.location.pathname.includes("Home.html")) {
   const token = localStorage.getItem("authToken");
   const userName = localStorage.getItem("userName");
   if (!token) window.location.href = "index.html";
