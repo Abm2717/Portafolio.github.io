@@ -26,7 +26,6 @@
     </main>
   </div>
 
-  <!-- ========== MODAL ========== -->
   <div id="projectModal" class="modal">
     <div class="modal-content">
       <button class="modal-close" id="closeModal">&times;</button>
@@ -35,14 +34,10 @@
       
       <form id="projectForm">
         <input type="hidden" id="projectId" />
-
-        <!-- Campos de texto -->
         <input id="title" type="text" placeholder="Título del proyecto" required />
         <textarea id="description" placeholder="Descripción del proyecto" required></textarea>
         <input id="technologies" type="text" placeholder="Tecnologías (separadas por comas)" />
         <input id="repository" type="url" placeholder="URL del repositorio (opcional)" />
-
-        <!-- Campo para subir imágenes -->
         <label for="images" class="label-file">Seleccionar imágenes</label>
         <input type="file" id="images" multiple accept="image/*" />
         <div id="preview" class="image-preview"></div>
