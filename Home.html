@@ -12,20 +12,21 @@
       <div class="user-info">
         <span id="userName">Nombre de usuario</span>
       </div>
-      <button id="logoutBtn" class="logout-btn">Cerrar sesion</button>
+      <button id="logoutBtn" class="logout-btn">Cerrar sesión</button>
     </header>
 
     <main class="projects-grid">
       <div id="projectList"></div>
       
-        <div class="add-project-card" id="addProjectBtn">
+      <div class="add-project-card" id="addProjectBtn">
         <span class="add-icon">+</span>
         <p>Agregar proyecto</p>
-        <small>Haz click para agregar proycetos a tu cuenta.</small>
+        <small>Haz click para agregar proyectos a tu cuenta.</small>
       </div>
     </main>
   </div>
 
+  <!-- ========== MODAL ========== -->
   <div id="projectModal" class="modal">
     <div class="modal-content">
       <button class="modal-close" id="closeModal">&times;</button>
@@ -34,11 +35,18 @@
       
       <form id="projectForm">
         <input type="hidden" id="projectId" />
-        <input id="title" type="text" placeholder="Titulo del proyecto" required />
-        <textarea id="description" placeholder="Descripcion del proyecto" required></textarea>
-        <input id="technologies" type="text" placeholder="Tecnologias (separadas por comas)" />
+
+        <!-- Campos de texto -->
+        <input id="title" type="text" placeholder="Título del proyecto" required />
+        <textarea id="description" placeholder="Descripción del proyecto" required></textarea>
+        <input id="technologies" type="text" placeholder="Tecnologías (separadas por comas)" />
         <input id="repository" type="url" placeholder="URL del repositorio (opcional)" />
-        
+
+        <!-- Campo para subir imágenes -->
+        <label for="images" class="label-file">Seleccionar imágenes</label>
+        <input type="file" id="images" multiple accept="image/*" />
+        <div id="preview" class="image-preview"></div>
+
         <div class="modal-buttons">
           <button type="submit" class="btn-save" id="saveBtn">Guardar</button>
           <button type="button" class="btn-delete" id="deleteBtn" style="display: none;">Eliminar</button>

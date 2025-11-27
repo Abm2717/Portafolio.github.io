@@ -53,7 +53,7 @@ document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
       localStorage.setItem("userName", data.userPublicData.name);
       localStorage.setItem("itsonId", data.userPublicData.itsonId);
 
-      msg.textContent = "✅ Inicio de sesión exitoso. Redirigiendo...";
+      msg.textContent = "Inicio de sesion exitoso. Redirigiendo...";
       msg.style.color = "green";
 
       setTimeout(() => (window.location.href = "home.html"), 1000);
@@ -62,8 +62,8 @@ document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
       msg.style.color = "red";
     }
   } catch (error) {
-    console.error("Error al iniciar sesión:", error);
-    msg.textContent = "Error de conexión con el servidor.";
+    console.error("Error al iniciar sesion:", error);
+    msg.textContent = "Error de conexion con el servidor.";
     msg.style.color = "red";
   }
 });
@@ -71,15 +71,8 @@ document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
 if (window.location.pathname.includes("home.html")) {
   const token = localStorage.getItem("authToken");
   const userName = localStorage.getItem("userName");
-  const userId = localStorage.getItem("userId");
-
-  if (!token) {
-    window.location.href = "index.html";
-  }
-
-  if (userName) {
-    document.getElementById("userName").textContent = userName;
-  }
+  if (!token) window.location.href = "index.html";
+  if (userName) document.getElementById("userName").textContent = userName;
 
   const projectList = document.getElementById("projectList");
   const modal = document.getElementById("projectModal");
@@ -87,28 +80,23 @@ if (window.location.pathname.includes("home.html")) {
   const projectForm = document.getElementById("projectForm");
   const projectIdInput = document.getElementById("projectId");
   const deleteBtn = document.getElementById("deleteBtn");
+  const imageInput = document.getElementById("images");
+  const preview = document.getElementById("preview");
 
+  let selectedImages = [];
   document.getElementById("logoutBtn").addEventListener("click", () => {
     localStorage.clear();
     window.location.href = "index.html";
   });
+  document.getElementById("addProjectBtn").addEventListener("click", () => openModal());
+  document.getElementById("closeModal").addEventListener("click", () => closeModal());
+  modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
 
-  document.getElementById("addProjectBtn").addEventListener("click", () => {
-    openModal();
-  });
-
-  document.getElementById("closeModal").addEventListener("click", () => {
-    closeModal();
-  });
-
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) {
-      closeModal();
-    }
-  });
-
-  
   function openModal(project = null) {
+    projectForm.reset();
+    preview.innerHTML = "";
+    selectedImages = [];
+
     if (project) {
       modalTitle.textContent = "Editar Proyecto";
       projectIdInput.value = project._id;
@@ -117,10 +105,17 @@ if (window.location.pathname.includes("home.html")) {
       document.getElementById("technologies").value = project.technologies?.join(", ") || "";
       document.getElementById("repository").value = project.repository || "";
       deleteBtn.style.display = "block";
+
+      if (project.images?.length) {
+        selectedImages = project.images;
+        project.images.forEach((img) => {
+          const imgEl = document.createElement("img");
+          imgEl.src = img;
+          preview.appendChild(imgEl);
+        });
+      }
     } else {
       modalTitle.textContent = "Agregar Proyecto";
-      projectForm.reset();
-      projectIdInput.value = "";
       deleteBtn.style.display = "none";
     }
     modal.classList.add("active");
@@ -129,17 +124,36 @@ if (window.location.pathname.includes("home.html")) {
   function closeModal() {
     modal.classList.remove("active");
     projectForm.reset();
+    preview.innerHTML = "";
+    selectedImages = [];
   }
+
+  imageInput.addEventListener("change", (e) => {
+    const files = Array.from(e.target.files);
+    preview.innerHTML = "";
+    selectedImages = [];
+
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64 = event.target.result;
+        selectedImages.push(base64);
+
+        const img = document.createElement("img");
+        img.src = base64;
+        preview.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    });
+  });
 
   async function loadProjects() {
     try {
       const res = await fetch(`${API_BASE}/projects`, {
         headers: { "auth-token": token },
       });
-      
-      if (!res.ok) {
-        throw new Error("Error al cargar proyectos");
-      }
+
+      if (!res.ok) throw new Error("Error al cargar proyectos");
 
       const data = await res.json();
       projectList.innerHTML = "";
@@ -148,22 +162,19 @@ if (window.location.pathname.includes("home.html")) {
         const card = document.createElement("div");
         card.classList.add("project-card");
         card.innerHTML = `
-          <h3>${escapeHtml(p.title)}</h3>
-          <p>${escapeHtml(p.description)}</p>
-          <p class="tech-list"><b>Tecnologías:</b> ${p.technologies?.map(t => escapeHtml(t)).join(", ") || "N/A"}</p>
-          ${p.repository ? `<p class="tech-list"><b>Repositorio:</b> <a href="${escapeHtml(p.repository)}" target="_blank">Ver enlace</a></p>` : ""}
+          <h3>${p.title}</h3>
+          <p>${p.description}</p>
+          <p><b>Tecnologias:</b> ${p.technologies?.join(", ") || "N/A"}</p>
+          ${p.repository ? `<p><b>Repositorio:</b> <a href="${p.repository}" target="_blank">Ver enlace</a></p>` : ""}
+          ${p.images?.length ? `<div class="image-gallery">${p.images.map(img => `<img src="${img}" alt="">`).join("")}</div>` : ""}
         `;
-        
-        
-        card.addEventListener("dblclick", () => {
-          openModal(p);
-        });
 
+        card.addEventListener("dblclick", () => openModal(p));
         projectList.appendChild(card);
       });
     } catch (error) {
       console.error("Error al cargar proyectos:", error);
-      alert("Error al cargar los proyectos. Por favor, intenta de nuevo.");
+      alert("Error al cargar los proyectos.");
     }
   }
 
@@ -177,102 +188,67 @@ if (window.location.pathname.includes("home.html")) {
     const technologiesStr = document.getElementById("technologies").value.trim();
     const repository = document.getElementById("repository").value.trim();
 
-    const technologies = technologiesStr 
-      ? technologiesStr.split(",").map(t => t.trim()).filter(t => t)
+    const technologies = technologiesStr
+      ? technologiesStr.split(",").map((t) => t.trim()).filter((t) => t)
       : [];
 
-  
     const projectData = {
       title,
       description,
       technologies,
       repository: repository || undefined,
-      images: [] 
+      images: selectedImages,
     };
 
     try {
       let res;
-      
       if (projectId) {
-        
         res = await fetch(`${API_BASE}/projects/${projectId}`, {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "auth-token": token,
-          },
+          headers: { "Content-Type": "application/json", "auth-token": token },
           body: JSON.stringify(projectData),
         });
       } else {
-        
         res = await fetch(`${API_BASE}/projects`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "auth-token": token,
-          },
+          headers: { "Content-Type": "application/json", "auth-token": token },
           body: JSON.stringify(projectData),
         });
       }
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Error al guardar el proyecto");
-      }
-
-      const savedProject = await res.json();
-      console.log("Proyecto guardado:", savedProject);
-
+      if (!res.ok) throw new Error("Error al guardar el proyecto");
       alert(projectId ? "Proyecto actualizado correctamente" : "Proyecto creado correctamente");
 
       closeModal();
       loadProjects();
-
     } catch (error) {
       console.error("Error al guardar proyecto:", error);
-      alert(error.message || "Error al guardar el proyecto. Por favor, intenta de nuevo.");
+      alert("Error al guardar el proyecto. Por favor, intenta de nuevo.");
     }
   });
 
   deleteBtn.addEventListener("click", async () => {
     const projectId = projectIdInput.value;
+    if (!projectId) return alert("No hay proyecto seleccionado para eliminar");
 
-    if (!projectId) {
-      alert("No hay proyecto seleccionado para eliminar");
-      return;
-    }
-
-    const confirmDelete = confirm("¿Estás seguro de que deseas eliminar este proyecto? Esta acción no se puede deshacer.");
-    
-    if (!confirmDelete) {
-      return;
-    }
+    if (!confirm("¿Estas seguro de eliminar este proyecto?")) return;
 
     try {
       const res = await fetch(`${API_BASE}/projects/${projectId}`, {
         method: "DELETE",
-        headers: {
-          "auth-token": token,
-        },
+        headers: { "auth-token": token },
       });
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Error al eliminar el proyecto");
-      }
-
-      console.log("Proyecto eliminado correctamente");
+      if (!res.ok) throw new Error("Error al eliminar proyecto");
       alert("Proyecto eliminado correctamente");
 
-    
       closeModal();
       loadProjects();
-
     } catch (error) {
-      console.error("Error al eliminar proyecto:", error);
-      alert(error.message || "Error al eliminar el proyecto. Por favor, intenta de nuevo.");
+      console.error("Error al eliminar:", error);
+      alert("Error al eliminar el proyecto.");
     }
   });
-  
+
   loadProjects();
 }
