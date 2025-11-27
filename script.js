@@ -46,12 +46,12 @@ document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
     const data = await res.json();
     console.log("Status:", res.status, "Respuesta:", data);
 
-    if (res.ok && data.token && data.userPublicData) {
+    if (res.ok && data.token && data.user) {
       localStorage.setItem("authToken", data.token);
-      localStorage.setItem("userId", data.userPublicData._id);
-      localStorage.setItem("userEmail", data.userPublicData.email);
-      localStorage.setItem("userName", data.userPublicData.name);
-      localStorage.setItem("itsonId", data.userPublicData.itsonId);
+      localStorage.setItem("userId", data.user.id);
+      localStorage.setItem("userEmail", data.user.email);
+      localStorage.setItem("userName", data.user.name);
+      localStorage.setItem("itsonId", data.user.itsonId);
 
       msg.textContent = "Inicio de sesion exitoso. Redirigiendo...";
       msg.style.color = "green";
@@ -84,10 +84,12 @@ if (window.location.pathname.includes("Home.html")) {
   const preview = document.getElementById("preview");
 
   let selectedImages = [];
+  
   document.getElementById("logoutBtn").addEventListener("click", () => {
     localStorage.clear();
     window.location.href = "index.html";
   });
+  
   document.getElementById("addProjectBtn").addEventListener("click", () => openModal());
   document.getElementById("closeModal").addEventListener("click", () => closeModal());
   modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
@@ -104,13 +106,16 @@ if (window.location.pathname.includes("Home.html")) {
       document.getElementById("description").value = project.description;
       document.getElementById("technologies").value = project.technologies?.join(", ") || "";
       document.getElementById("repository").value = project.repository || "";
+      document.getElementById("images").value = project.images?.join(", ") || "";
+      
       deleteBtn.style.display = "block";
 
       if (project.images?.length) {
-        selectedImages = project.images;
         project.images.forEach((img) => {
           const imgEl = document.createElement("img");
           imgEl.src = img;
+          imgEl.style.maxWidth = "200px";
+          imgEl.style.margin = "5px";
           preview.appendChild(imgEl);
         });
       }
@@ -128,22 +133,24 @@ if (window.location.pathname.includes("Home.html")) {
     selectedImages = [];
   }
 
-  imageInput.addEventListener("change", (e) => {
-    const files = Array.from(e.target.files);
+  imageInput.addEventListener("input", (e) => {
+    const urls = e.target.value
+      .split(",")
+      .map(s => s.trim())
+      .filter(Boolean);
+    
     preview.innerHTML = "";
-    selectedImages = [];
-
-    files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const base64 = event.target.result;
-        selectedImages.push(base64);
-
-        const img = document.createElement("img");
-        img.src = base64;
-        preview.appendChild(img);
+    
+    urls.forEach((url) => {
+      const img = document.createElement("img");
+      img.src = url;
+      img.style.maxWidth = "200px";
+      img.style.margin = "5px";
+      img.onerror = () => {
+        img.alt = "URL inválida";
+        img.style.border = "2px solid red";
       };
-      reader.readAsDataURL(file);
+      preview.appendChild(img);
     });
   });
 
@@ -166,7 +173,7 @@ if (window.location.pathname.includes("Home.html")) {
           <p>${p.description}</p>
           <p><b>Tecnologias:</b> ${p.technologies?.join(", ") || "N/A"}</p>
           ${p.repository ? `<p><b>Repositorio:</b> <a href="${p.repository}" target="_blank">Ver enlace</a></p>` : ""}
-          ${p.images?.length ? `<div class="image-gallery">${p.images.map(img => `<img src="${img}" alt="">`).join("")}</div>` : ""}
+          ${p.images?.length ? `<div class="image-gallery">${p.images.map(img => `<img src="${img}" alt="" style="max-width: 200px; margin: 5px;">`).join("")}</div>` : ""}
         `;
 
         card.addEventListener("dblclick", () => openModal(p));
@@ -178,7 +185,6 @@ if (window.location.pathname.includes("Home.html")) {
     }
   }
 
-
   projectForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -187,9 +193,14 @@ if (window.location.pathname.includes("Home.html")) {
     const description = document.getElementById("description").value.trim();
     const technologiesStr = document.getElementById("technologies").value.trim();
     const repository = document.getElementById("repository").value.trim();
+    const imagesStr = document.getElementById("images").value.trim();
 
     const technologies = technologiesStr
       ? technologiesStr.split(",").map((t) => t.trim()).filter((t) => t)
+      : [];
+    
+    const images = imagesStr
+      ? imagesStr.split(",").map((url) => url.trim()).filter((url) => url)
       : [];
 
     const projectData = {
@@ -197,8 +208,10 @@ if (window.location.pathname.includes("Home.html")) {
       description,
       technologies,
       repository: repository || undefined,
-      images: selectedImages,
+      images: images  
     };
+
+    console.log("Enviando proyecto:", projectData);
 
     try {
       let res;
@@ -216,14 +229,18 @@ if (window.location.pathname.includes("Home.html")) {
         });
       }
 
-      if (!res.ok) throw new Error("Error al guardar el proyecto");
-      alert(projectId ? "Proyecto actualizado correctamente" : "Proyecto creado correctamente");
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Error al guardar el proyecto");
+      }
 
+      alert(projectId ? "Proyecto actualizado correctamente" : "Proyecto creado correctamente");
       closeModal();
       loadProjects();
+      
     } catch (error) {
       console.error("Error al guardar proyecto:", error);
-      alert("Error al guardar el proyecto. Por favor, intenta de nuevo.");
+      alert("Error al guardar el proyecto: " + error.message);
     }
   });
 

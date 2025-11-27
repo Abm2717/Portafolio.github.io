@@ -38,8 +38,9 @@
         <textarea id="description" placeholder="Descripción del proyecto" required></textarea>
         <input id="technologies" type="text" placeholder="Tecnologías (separadas por comas)" />
         <input id="repository" type="url" placeholder="URL del repositorio (opcional)" />
-        <label for="images" class="label-file">Seleccionar imágenes</label>
-        <input type="file" id="images" multiple accept="image/*" />
+        <label for="images">URLs de imágenes (separadas por comas)</label>
+        <input type="text" id="images" placeholder="https://ejemplo.com/img1.jpg, https://ejemplo.com/img2.jpg" />
+        <small>Pega las URLs de tus imágenes separadas por comas</small>
         <div id="preview" class="image-preview"></div>
 
         <div class="modal-buttons">
