@@ -1,18 +1,53 @@
+
+:root {
+  /* Colores  */
+  --color-primario: #0277bd;
+  --color-primario-oscuro: #01579b;
+  --color-blanco: #ffffff;
+  --color-negro: #333333;
+  --color-gris: #666666;
+  --color-gris-claro: #cccccc;
+  --color-gris-muy-claro: #999999;
+  --color-fondo-claro: #f0f9ff;
+  
+  /*Otros colores*/
+  --color-exito: #4caf50;
+  --color-exito-hover: #45a049;
+  --color-peligro: #ff4444;
+  --color-peligro-hover: #cc0000;
+  --color-logout: #d32f2f;
+  --color-logout-hover: #b71c1c;
+  
+  --gradiente-fondo: linear-gradient(to bottom, #b3e5fc, #e3f2fd);
+  
+  /* Tamaños de fuente */
+  --fuente-pequena: 0.75rem;
+  --fuente-chica: 0.8rem;
+  --fuente-descripcion: 0.85rem;
+  --fuente-normal: 0.9rem;
+  --fuente-mediana: 1rem;
+  --fuente-grande: 1.1rem;
+  --fuente-titulo: 1.5rem;
+  --fuente-icono: 3rem;
+  
+  /* Fuentes */
+  --fuente-principal: "Poppins", sans-serif;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: "Poppins", sans-serif;
+  font-family: var(--fuente-principal);
 }
 
 body {
-  background: linear-gradient(to bottom, #b3e5fc, #e3f2fd);
+  background: var(--gradiente-fondo);
   min-height: 100vh;
 }
 
-/* === ESTILOS PARA LOGIN Y REGISTER === */
 .container {
-  background: #fff;
+  background: var(--color-blanco);
   padding: 2rem;
   border-radius: 1rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
@@ -28,7 +63,7 @@ body {
 }
 
 h1 {
-  color: #0277bd;
+  color: var(--color-primario);
   margin-bottom: 1rem;
 }
 
@@ -40,14 +75,14 @@ form {
 
 input:not(.modal input) {
   padding: 0.8rem;
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-gris-claro);
   border-radius: 0.5rem;
 }
 
 button {
   padding: 0.8rem;
-  background: #0277bd;
-  color: white;
+  background: var(--color-primario);
+  color: var(--color-blanco);
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -55,16 +90,16 @@ button {
 }
 
 button:hover {
-  background: #01579b;
+  background: var(--color-primario-oscuro);
 }
 
 p {
   margin-top: 1rem;
-  color: #333;
+  color: var(--color-negro);
 }
 
 a {
-  color: #0277bd;
+  color: var(--color-primario);
   text-decoration: none;
 }
 
@@ -76,12 +111,11 @@ a:hover {
   display: inline-block;
   margin-top: 1rem;
   padding: 0.6rem 1rem;
-  background: #0277bd;
-  color: white;
+  background: var(--color-primario);
+  color: var(--color-blanco);
   border-radius: 0.5rem;
 }
 
-/* === ESTILOS PARA HOME === */
 .home-container {
   max-width: 1400px;
   margin: 0 auto;
@@ -89,7 +123,7 @@ a:hover {
 }
 
 .home-header {
-  background: white;
+  background: var(--color-blanco);
   padding: 1.5rem 2rem;
   border-radius: 0.5rem;
   margin-bottom: 2rem;
@@ -100,22 +134,21 @@ a:hover {
 }
 
 .user-info {
-  font-size: 1.1rem;
+  font-size: var(--fuente-grande);
   font-weight: 600;
-  color: #333;
+  color: var(--color-negro);
 }
 
 .logout-btn {
   padding: 0.6rem 1.5rem;
-  background: #d32f2f;
+  background: var(--color-logout);
   border-radius: 0.5rem;
 }
 
 .logout-btn:hover {
-  background: #b71c1c;
+  background: var(--color-logout-hover);
 }
 
-/* Grid de proyectos */
 .projects-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -127,10 +160,9 @@ a:hover {
   display: contents;
 }
 
-/* Tarjetas de proyecto */
 .project-card {
-  background: white;
-  border: 3px solid #333;
+  background: var(--color-blanco);
+  border: 3px solid var(--color-negro);
   border-radius: 0.5rem;
   padding: 1.5rem;
   min-height: 200px;
@@ -145,27 +177,26 @@ a:hover {
 }
 
 .project-card h3 {
-  color: #0277bd;
+  color: var(--color-primario);
   margin-bottom: 0.5rem;
-  font-size: 1.1rem;
+  font-size: var(--fuente-grande);
 }
 
 .project-card p {
-  color: #666;
-  font-size: 0.9rem;
+  color: var(--color-gris);
+  font-size: var(--fuente-normal);
   margin: 0.5rem 0;
 }
 
 .project-card .tech-list {
-  font-size: 0.8rem;
-  color: #999;
+  font-size: var(--fuente-chica);
+  color: var(--color-gris-muy-claro);
   margin-top: 0.5rem;
 }
 
-/* Tarjeta para agregar proyecto */
 .add-project-card {
-  background: white;
-  border: 3px dashed #0277bd;
+  background: var(--color-blanco);
+  border: 3px dashed var(--color-primario);
   border-radius: 0.5rem;
   padding: 2rem 1.5rem;
   min-height: 200px;
@@ -179,32 +210,31 @@ a:hover {
 }
 
 .add-project-card:hover {
-  background: #f0f9ff;
-  border-color: #01579b;
+  background: var(--color-fondo-claro);
+  border-color: var(--color-primario-oscuro);
 }
 
 .add-icon {
-  font-size: 3rem;
-  color: #0277bd;
+  font-size: var(--fuente-icono);
+  color: var(--color-primario);
   font-weight: 300;
   line-height: 1;
 }
 
 .add-project-card p {
   font-weight: 600;
-  color: #0277bd;
+  color: var(--color-primario);
   margin: 0.5rem 0;
-  font-size: 1rem;
+  font-size: var(--fuente-mediana);
 }
 
 .add-project-card small {
-  color: #666;
-  font-size: 0.75rem;
+  color: var(--color-gris);
+  font-size: var(--fuente-pequena);
   line-height: 1.4;
   max-width: 250px;
 }
 
-/* Modal */
 .modal {
   display: none;
   position: fixed;
@@ -233,7 +263,7 @@ a:hover {
 }
 
 .modal-content {
-  background: white;
+  background: var(--color-blanco);
   padding: 2rem;
   border-radius: 0.8rem;
   width: 90%;
@@ -258,13 +288,13 @@ a:hover {
   position: absolute;
   right: 1rem;
   top: 1rem;
-  background: #ff4444;
-  color: white;
+  background: var(--color-peligro);
+  color: var(--color-blanco);
   border: none;
   width: 35px;
   height: 35px;
   border-radius: 0.3rem;
-  font-size: 1.5rem;
+  font-size: var(--fuente-titulo);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -274,17 +304,17 @@ a:hover {
 }
 
 .modal-close:hover {
-  background: #cc0000;
+  background: var(--color-peligro-hover);
 }
 
 .modal h2 {
-  color: #0277bd;
+  color: var(--color-primario);
   margin-bottom: 0.5rem;
 }
 
 .modal-description {
-  font-size: 0.85rem;
-  color: #666;
+  font-size: var(--fuente-descripcion);
+  color: var(--color-gris);
   margin-bottom: 1.5rem;
   line-height: 1.5;
 }
@@ -293,10 +323,10 @@ a:hover {
 .modal textarea {
   width: 100%;
   padding: 0.8rem;
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-gris-claro);
   border-radius: 0.5rem;
   margin-bottom: 1rem;
-  font-family: "Poppins", sans-serif;
+  font-family: var(--fuente-principal);
 }
 
 .modal textarea {
@@ -312,22 +342,22 @@ a:hover {
 
 .btn-save {
   flex: 1;
-  background: #4caf50;
+  background: var(--color-exito);
   padding: 0.8rem;
 }
 
 .btn-save:hover {
-  background: #45a049;
+  background: var(--color-exito-hover);
 }
 
 .btn-delete {
   flex: 1;
-  background: #ff4444;
+  background: var(--color-peligro);
   padding: 0.8rem;
 }
 
 .btn-delete:hover {
-  background: #cc0000;
+  background: var(--color-peligro-hover);
 }
 
 .image-preview {
@@ -342,7 +372,7 @@ a:hover {
   height: 80px;
   object-fit: cover;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-gris-claro);
   box-shadow: 0 0 3px rgba(0,0,0,0.2);
 }
 
@@ -351,8 +381,6 @@ a:hover {
   height: 80px;
 }
 
-
-/* Responsive */
 @media (max-width: 768px) {
   .projects-grid {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));

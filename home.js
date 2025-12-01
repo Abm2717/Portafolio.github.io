@@ -1,74 +1,5 @@
 const API_BASE = "https://portfolio-api-three-black.vercel.app/api/v1"; 
 
-document.getElementById("registerForm")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const name = document.getElementById("regName").value;
-  const email = document.getElementById("regEmail").value;
-  const password = document.getElementById("regPassword").value;
-  const itsonId = document.getElementById("regItson").value;
-
-  try {
-    const res = await fetch(`${API_BASE}/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password, itsonId }),
-    });
-
-    const data = await res.json();
-    const msg = document.getElementById("registerMsg");
-
-    if (res.ok) {
-      msg.textContent = "Usuario registrado correctamente.";
-      msg.style.color = "green";
-      setTimeout(() => (window.location.href = "index.html"), 1500);
-    } else {
-      msg.textContent = data.message || "Error al registrar.";
-      msg.style.color = "red";
-    }
-  } catch (error) {
-    alert("Error al registrar usuario.");
-  }
-});
-
-document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
-  const msg = document.getElementById("loginMsg");
-
-  try {
-    const res = await fetch(`${API_BASE}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const data = await res.json();
-    console.log("Status:", res.status, "Respuesta:", data);
-
-    // ✅ CORRECTO: Tu API devuelve data.userPublicData
-    if (res.ok && data.token && data.userPublicData) {
-      localStorage.setItem("authToken", data.token);
-      localStorage.setItem("userId", data.userPublicData._id);
-      localStorage.setItem("userEmail", data.userPublicData.email);
-      localStorage.setItem("userName", data.userPublicData.name);
-      localStorage.setItem("itsonId", data.userPublicData.itsonId);
-
-      msg.textContent = "Inicio de sesion exitoso. Redirigiendo...";
-      msg.style.color = "green";
-
-      setTimeout(() => (window.location.href = "Home.html"), 1000);
-    } else {
-      msg.textContent = "Credenciales incorrectas.";
-      msg.style.color = "red";
-    }
-  } catch (error) {
-    console.error("Error al iniciar sesion:", error);
-    msg.textContent = "Error de conexion con el servidor.";
-    msg.style.color = "red";
-  }
-});
-
 if (window.location.pathname.includes("Home.html")) {
   const token = localStorage.getItem("authToken");
   const userName = localStorage.getItem("userName");
@@ -107,7 +38,7 @@ if (window.location.pathname.includes("Home.html")) {
       document.getElementById("images").value = project.images?.join(", ") || "";
       deleteBtn.style.display = "block";
 
-      // Preview de imágenes
+    
       if (project.images?.length) {
         project.images.forEach((img) => {
           const imgEl = document.createElement("img");
@@ -130,7 +61,6 @@ if (window.location.pathname.includes("Home.html")) {
     preview.innerHTML = "";
   }
 
-  // Preview en tiempo real de las URLs de imágenes
   imageInput.addEventListener("input", (e) => {
     const urls = e.target.value
       .split(",")
